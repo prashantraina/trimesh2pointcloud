@@ -51,15 +51,18 @@ void poisson_disk_raw(
                   int nb_samples,
                   const float *pVerts,
                   const int nVerts,
+                  const float *pNormals,
                   const int *pTris,
                   const int nTris,
-                  std::vector<float>& sampled_pos)
+                  std::vector<float>& sampled_pos,
+                  std::vector<float>& sampled_normals)
 {
     assert(nVerts > 0);
     assert(nTris > 0);
 
     vcg::MyMesh vcg_mesh, sampler;
     vcg_mesh.concat(pVerts, pTris, nVerts, nTris);
+    vcg_mesh.set_normals( pNormals );
     vcg_mesh.update_bb();
 
     vcg::MyAlgorithms::Poison_setup pp;
@@ -71,14 +74,20 @@ void poisson_disk_raw(
     const int nb_vert = sampler.vert.size();
     sampled_pos.clear();
     sampled_pos.resize( nb_vert*3 );
+    sampled_normals.clear();
+    sampled_normals.resize( nb_vert*3 );
     vcg::MyMesh::VertexIterator vi = sampler.vert.begin();
 //    printf("nb_vert=%d\n",nb_vert);
     for(int i = 0; i < nb_vert; ++i, ++vi)
     {
-        vcg::MyMesh::CoordType  p = (*vi).P();
+        const vcg::MyMesh::CoordType&  p = (*vi).cP();
+        const vcg::MyMesh::NormalType&  n = (*vi).cN();
         sampled_pos[i*3+0] = p.X();
         sampled_pos[i*3+1] = p.Y();
         sampled_pos[i*3+2] = p.Z();
+        sampled_normals[i*3+0] = n.X();
+        sampled_normals[i*3+1] = n.Y();
+        sampled_normals[i*3+2] = n.Z();
 //        printf("%f %f %f\n", sampled_pos[i*3+0], sampled_pos[i*3+1], sampled_pos[i*3+2]);
     }
 }

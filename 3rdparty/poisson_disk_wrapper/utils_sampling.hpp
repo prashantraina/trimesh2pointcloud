@@ -38,8 +38,10 @@ void poisson_disk_raw(
                   int nb_samples,
                   const float *pVerts,
                   const int nVerts,
+                  const float *pNormals,
                   const int *pTris,
                   const int nTris,
-                  std::vector<float>& sampled_pos);
+                  std::vector<float>& sampled_pos,
+                  std::vector<float>& sampled_normals);
 
 }// END UTILS_SAMPLING NAMESPACE ===============================================
